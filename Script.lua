@@ -22,7 +22,7 @@ local LocalPlayer = Players.LocalPlayer
 
 getgenv().Config = {
     AutoFarm = false,
-    Weapon = "Melee", -- "Melee", "Sword", "Blox Fruit"
+    Weapon = "Melee",
     FastAttack = true,
     FastAttackSpeed = 0.0004,
     BringMob = true,
@@ -55,6 +55,20 @@ if PlaceId == 2753915549 or PlaceId == 85211729168715 then World1 = true
 elseif PlaceId == 4442272183 or PlaceId == 79091703265657 then World2 = true
 elseif PlaceId == 7449423635 or PlaceId == 100117331123089 then World3 = true end
 
+-- ==================== LOGGER ====================
+local function Log(msg, level)
+    level = level or "INFO"
+    print("[" .. os.date("%H:%M:%S") .. "][" .. level .. "] " .. msg)
+end
+
+-- ==================== CHECAR FARM ATIVO ====================
+local function IsAutoFarmActive()
+    return getgenv().Config.AutoFarm or getgenv().Config.AutoEliteHunter 
+        or getgenv().Config.AutoBossFarm or getgenv().Config.AutoSeaBeast 
+        or getgenv().Config.AutoTerrorShark or getgenv().Config.AutoBone 
+        or getgenv().Config.AutoRaid or getgenv().Config.AutoCollectFruits
+end
+
 -- Anti-AFK Avançado
 LocalPlayer.Idled:Connect(function()
     VirtualUser:Button2Down(Vector2.zero, workspace.CurrentCamera.CFrame)
@@ -64,10 +78,12 @@ end)
 
 -- Auto Reconnect em Erros de Conexão
 if CoreGui:FindFirstChild("RobloxPromptGui") then
-    CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
-        if getgenv().Config.AutoRejoin and child.Name == "ErrorPrompt" then
-            TeleportService:Teleport(PlaceId, LocalPlayer)
-        end
+    pcall(function()
+        CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+            if getgenv().Config.AutoRejoin and child.Name == "ErrorPrompt" then
+                TeleportService:Teleport(PlaceId, LocalPlayer)
+            end
+        end)
     end)
 end
 
@@ -85,13 +101,13 @@ if getgenv().Config.AntiLag then
                 v:Destroy()
             end
         end
+        Log("Anti-Lag otimizado!", "OK")
     end)
 end
 
--- Noclip Dinâmico para Navegação Fluida
-RunService.Stepped:Connect(function()
-    local activeMoving = getgenv().Config.AutoFarm or getgenv().Config.AutoEliteHunter or getgenv().Config.AutoBossFarm or getgenv().Config.AutoSeaBeast or getgenv().Config.AutoRaid
-    if activeMoving and LocalPlayer.Character then
+-- Noclip Otimizado com RenderStepped
+RunService.RenderStepped:Connect(function()
+    if IsAutoFarmActive() and LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") then part.CanCollide = false end
         end
@@ -148,7 +164,7 @@ UIBorderMain.Parent = MainFrame
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 38)
 Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-Title.Text = "   ⚡ AKAIL HUB ULTIMATE — NÍVEL 2800+"
+Title.Text = "   ⚡ AKAIL HUB ULTIMATE — 100% OTIMIZADO"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 11
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -316,16 +332,17 @@ PartPivot.Parent = workspace
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            local active = getgenv().Config.AutoFarm or getgenv().Config.AutoEliteHunter or getgenv().Config.AutoBossFarm or getgenv().Config.AutoBone or getgenv().Config.AutoRaid or getgenv().Config.AutoCollectFruits
-            if active and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                 local root = LocalPlayer.Character.HumanoidRootPart
-                if (root.Position - PartPivot.Position).Magnitude <= 350 then
-                    root.CFrame = PartPivot.CFrame
+                if IsAutoFarmActive() then
+                    if (root.Position - PartPivot.Position).Magnitude <= 350 then
+                        root.CFrame = PartPivot.CFrame
+                    else
+                        PartPivot.CFrame = root.CFrame
+                    end
                 else
                     PartPivot.CFrame = root.CFrame
                 end
-            elseif LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                PartPivot.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
             end
         end)
     end
@@ -340,6 +357,8 @@ local function ToTarget(TargetCFrame)
         
         if currentTween then currentTween:Cancel() end
         local duration = math.max(dist / speed, 0.05)
+        duration = math.min(duration, 10)
+        
         local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
         currentTween = TweenService:Create(PartPivot, tweenInfo, {CFrame = TargetCFrame})
         currentTween:Play()
@@ -359,15 +378,20 @@ local function CheckHaki()
     end)
 end
 
-local function BringMobsPro(MobName, TargetCFrame)
+local function BringMobsPro(MobName, TargetCFrame, maxMobs)
     if not getgenv().Config.BringMob or not workspace:FindFirstChild("Enemies") then return end
+    maxMobs = maxMobs or 10
+    local broughtCount = 0
+    
     pcall(function()
         for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+            if broughtCount >= maxMobs then break end
             if (enemy.Name == MobName or MobName == "All") and enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("Humanoid") then
                 if enemy.Humanoid.Health > 0 and (enemy.HumanoidRootPart.Position - TargetCFrame).Magnitude <= 450 then
                     enemy.HumanoidRootPart.CFrame = CFrame.new(TargetCFrame)
                     enemy.HumanoidRootPart.CanCollide = false
                     enemy.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    broughtCount = broughtCount + 1
                     pcall(function()
                         enemy.Humanoid.WalkSpeed = 0
                         enemy.Humanoid.JumpPower = 0
@@ -380,7 +404,7 @@ end
 
 task.spawn(function()
     while task.wait(getgenv().Config.FastAttackSpeed) do
-        local activeCombat = getgenv().Config.AutoFarm or getgenv().Config.AutoEliteHunter or getgenv().Config.AutoBossFarm or getgenv().Config.AutoRaid
+        local activeCombat = IsAutoFarmActive()
         if activeCombat and getgenv().Config.FastAttack then
             pcall(function()
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
@@ -409,7 +433,7 @@ local function AutoEquip()
 end
 
 -- =================================================================
--- 6. ESP VISUAL SYSTEM (PLAYERS, BOSSES, FRUITS, CHESTS)
+-- 6. ESP VISUAL SYSTEM OTIMIZADO
 -- =================================================================
 local function CreateESP(obj, textName, color)
     if obj:FindFirstChild("Akail_ESP") then return end
@@ -444,17 +468,25 @@ task.spawn(function()
                 end
             end
             
-            for _, v in pairs(workspace:GetDescendants()) do
-                if v:IsA("Model") and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
-                    if getgenv().Config.ESPBoss and v.Humanoid.MaxHealth > 5000 and not Players:GetPlayerFromCharacter(v) then
+            if workspace:FindFirstChild("Enemies") and getgenv().Config.ESPBoss then
+                for _, v in pairs(workspace.Enemies:GetChildren()) do
+                    if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.MaxHealth > 5000 then
                         CreateESP(v.HumanoidRootPart, "👑 " .. v.Name, Color3.fromRGB(255, 215, 0))
                     end
-                elseif v:IsA("Tool") and v.Name:find("Fruit") and v:FindFirstChild("Handle") then
-                    if getgenv().Config.ESPFruit then
-                        CreateESP(v.Handle, "🍎 " .. v.Name, Color3.fromRGB(0, 255, 128))
+                end
+            end
+            
+            if getgenv().Config.ESPFruit then
+                for _, item in pairs(workspace:FindFirstChild("Dropped") and workspace.Dropped:GetChildren() or {}) do
+                    if item:IsA("Tool") and item.Name:find("Fruit") and item:FindFirstChild("Handle") then
+                        CreateESP(item.Handle, "🍎 " .. item.Name, Color3.fromRGB(0, 255, 128))
                     end
-                elseif v:IsA("Part") and (v.Name:find("Chest") or v.Name:find("Treasure")) then
-                    if getgenv().Config.ESPChest then
+                end
+            end
+            
+            if getgenv().Config.ESPChest then
+                for _, v in pairs(workspace:GetDescendants()) do
+                    if v:IsA("Part") and (v.Name:find("Chest") or v.Name:find("Treasure")) then
                         CreateESP(v, "📦 Chest", Color3.fromRGB(0, 160, 255))
                     end
                 end
@@ -464,7 +496,7 @@ task.spawn(function()
 end)
 
 -- =================================================================
--- 7. BANCO DE QUESTS (NÍVEL 2800+)
+-- 7. BANCO DE QUESTS (NÍVEL 2800+ COMPLETO)
 -- =================================================================
 local function GetQuestData()
     if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return nil end
@@ -515,7 +547,7 @@ task.spawn(function()
                     else
                         ToTarget(quest.MobCFrame * CFrame.new(0, 25, 0))
                         AutoEquip()
-                        BringMobsPro(quest.MobName, quest.MobCFrame.Position)
+                        BringMobsPro(quest.MobName, quest.MobCFrame.Position, 8)
                     end
                 end
             end)
@@ -525,12 +557,58 @@ task.spawn(function()
                 ToTarget(CFrame.new(-5863, 15, -738))
                 ReplicatedStorage.Remotes.CommF_:InvokeServer("EliteHunter")
                 
-                for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                    if (enemy.Name:find("Diablo") or enemy.Name:find("Deandre") or enemy.Name:find("Urban")) and enemy:FindFirstChild("HumanoidRootPart") then
-                        ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
-                        AutoEquip()
+                if workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        if (enemy.Name:find("Diablo") or enemy.Name:find("Deandre") or enemy.Name:find("Urban")) and enemy:FindFirstChild("HumanoidRootPart") then
+                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
+                            AutoEquip()
+                        end
                     end
                 end
+            end)
+        elseif getgenv().Config.AutoBossFarm then
+            pcall(function()
+                CheckHaki()
+                if workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.MaxHealth > 5000 and enemy:FindFirstChild("HumanoidRootPart") then
+                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
+                            AutoEquip()
+                            BringMobsPro(enemy.Name, enemy.HumanoidRootPart.Position, 5)
+                        end
+                    end
+                end
+            end)
+        elseif getgenv().Config.AutoSeaBeast and World3 then
+            pcall(function()
+                CheckHaki()
+                if workspace:FindFirstChild("SeaBeasts") then
+                    for _, sb in pairs(workspace.SeaBeasts:GetChildren()) do
+                        if sb:FindFirstChild("PrimaryPart") then
+                            ToTarget(sb.PrimaryPart.CFrame * CFrame.new(0, 30, 0))
+                            AutoEquip()
+                        end
+                    end
+                end
+            end)
+        elseif getgenv().Config.AutoTerrorShark and World3 then
+            pcall(function()
+                CheckHaki()
+                if workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        if enemy.Name:find("TerrorShark") and enemy:FindFirstChild("HumanoidRootPart") then
+                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 25, 0))
+                            AutoEquip()
+                        end
+                    end
+                end
+            end)
+        elseif getgenv().Config.AutoBone and World3 then
+            pcall(function()
+                CheckHaki()
+                ToTarget(CFrame.new(-9506, 172, 6139))
+                AutoEquip()
+                BringMobsPro("Demonic Soul", Vector3.new(-9506, 172, 6139), 8)
             end)
         end
     end
@@ -540,14 +618,16 @@ end)
 task.spawn(function()
     while task.wait(3) do
         pcall(function()
-            if getgenv().Config.AutoCollectFruits then
-                for _, item in pairs(workspace:GetChildren()) do
+            if getgenv().Config.AutoCollectFruits and workspace:FindFirstChild("Dropped") then
+                for _, item in pairs(workspace.Dropped:GetChildren()) do
                     if item:IsA("Tool") and item.Name:find("Fruit") and item:FindFirstChild("Handle") then
                         ToTarget(item.Handle.CFrame)
                     end
                 end
             end
-            if getgenv().Config.AutoRandomFruit then ReplicatedStorage.Remotes.CommF_:InvokeServer("Cousin", "Buy") end
+            if getgenv().Config.AutoRandomFruit then 
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("Cousin", "Buy") 
+            end
             if getgenv().Config.AutoStoreFruit and LocalPlayer:FindFirstChild("Backpack") then
                 for _, item in pairs(LocalPlayer.Backpack:GetChildren()) do
                     if item:IsA("Tool") and item.Name:find("Fruit") then
@@ -555,12 +635,20 @@ task.spawn(function()
                     end
                 end
             end
-            if getgenv().Config.AutoStatsMelee then ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Melee", getgenv().Config.StatsPoints) end
-            if getgenv().Config.AutoStatsDefense then ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Defense", getgenv().Config.StatsPoints) end
-            if getgenv().Config.AutoStatsFruit then ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Demon Fruit", getgenv().Config.StatsPoints) end
-            if getgenv().Config.AutoStatsGun then ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Gun", getgenv().Config.StatsPoints) end
+            if getgenv().Config.AutoStatsMelee then 
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Melee", getgenv().Config.StatsPoints) 
+            end
+            if getgenv().Config.AutoStatsDefense then 
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Defense", getgenv().Config.StatsPoints) 
+            end
+            if getgenv().Config.AutoStatsFruit then 
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Demon Fruit", getgenv().Config.StatsPoints) 
+            end
+            if getgenv().Config.AutoStatsGun then 
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Gun", getgenv().Config.StatsPoints) 
+            end
         end)
     end
 end)
 
-print("Akail Hub Ultimate (Versão Otimizada) carregado com sucesso!")
+Log("✅ Akail Hub Ultimate (100% Otimizado e Completo) carregado com sucesso!", "SUCCESS")
