@@ -8,7 +8,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 
-repeat task.wait() until game:IsLoaded()
+-- Espera o jogo carregar com segurança
+if not game:IsLoaded() then 
+    game.Loaded:Wait() 
+end
 
 -- CONFIGURAÇÕES DO KEY SYSTEM
 local GET_LINK = "https://seulinkdekey.com"
@@ -35,9 +38,7 @@ local function CoreGuiAdd(gui)
     end)
 end
 
--- =======================================================
--- LÓGICA PRINCIPAL DO SCRIPT (EXECUTADA APÓS A KEY)
--- =======================================================
+-- LÓGICA PRINCIPAL DO SCRIPT
 local function ExecuteMainScript()
     local LocalPlayer = Players.LocalPlayer
     local Backpack = LocalPlayer:WaitForChild("Backpack")
@@ -55,12 +56,12 @@ local function ExecuteMainScript()
     local function EquipWeapon(ToolName)
         if not ToolName then return end
         local tool = LocalPlayer.Backpack:FindFirstChild(ToolName)
-        if tool then
+        if tool and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
             LocalPlayer.Character.Humanoid:EquipTool(tool)
         end
     end
 
-    -- Limpeza de mapa (Anti-Lag / Remove Névoa)
+    -- Limpeza de mapa (Anti-Lag)
     local Rocks = workspace:FindFirstChild("Rocks")
     if Rocks then Rocks:Destroy() end
 
@@ -69,27 +70,28 @@ local function ExecuteMainScript()
         if d and d:FindFirstChild("DarkFog") then
             d.DarkFog:Destroy()
         end
-        if workspace._WorldOrigin:FindFirstChild("Foam;") then
+        if workspace:FindFirstChild("_WorldOrigin") and workspace._WorldOrigin:FindFirstChild("Foam;") then
             workspace._WorldOrigin["Foam;"]:Destroy()
         end
     end)
 
-    -- PartPivot e Noclip
-    local PartPivot = Instance.new("Part", workspace)
+    -- PartPivot e Noclip (Corrigido Instance.new)
+    local PartPivot = Instance.new("Part")
     PartPivot.Size = Vector3.new(1, 1, 1)
     PartPivot.Name = "Rip_Indra"
     PartPivot.Anchored = true
     PartPivot.CanCollide = false
     PartPivot.Transparency = 1
+    PartPivot.Parent = workspace
 
     task.spawn(function()
-        repeat task.wait() until LocalPlayer.Character and LocalPlayer.Character.PrimaryPart
-        PartPivot.CFrame = LocalPlayer.Character.PrimaryPart.CFrame
+        repeat task.wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        PartPivot.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
         
         while task.wait() do
             pcall(function()
                 if getgenv().OnFarm then
-                    local root = LocalPlayer.Character and LocalPlayer.Character.PrimaryPart
+                    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                     if root and (root.Position - PartPivot.Position).Magnitude <= 200 then
                         root.CFrame = PartPivot.CFrame
                     else
@@ -121,8 +123,9 @@ local function ExecuteMainScript()
         tween:Play()
     end
 
-    -- Checagem de Quests no Sea 3
+    -- Checagem de Quests
     getgenv().CheckQuest = function()
+        if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return end
         local MyLevel = LocalPlayer.Data.Level.Value
         if World3 then
             if MyLevel >= 2075 and MyLevel <= 2099 then
@@ -136,9 +139,7 @@ local function ExecuteMainScript()
     end
 end
 
--- =======================================================
 -- INTERFACE HOHO HUB (KEY SYSTEM)
--- =======================================================
 local INFO_DOT25_QUAD = TweenInfo.new(.25, Enum.EasingStyle.Quad)
 
 local PreloadID = {
@@ -691,7 +692,7 @@ GET_KEY.Visible = false
 INTRO.GroupTransparency = 1
 GET_KEY.GroupTransparency = 1
 
--- ANIMAÇÕES E EVENTOS DE HOVER
+-- ANIMAÇÕES E EVENTOS
 for _, button in pairs({Get, Submit, Close, Support}) do
     if button == Get or button == Submit then
         button.MouseEnter:Connect(function()
@@ -739,7 +740,7 @@ task.wait(0.5)
 GET_KEY.Visible = true
 TweenService:Create(GET_KEY, INFO_DOT25_QUAD, {GroupTransparency = 0}):Play()
 
--- LÓGICA DE VALIDAÇÃO DA KEY
+-- VALIDAÇÃO DA KEY
 local function do_check_key(key)
     if key == SECRET_KEY then
         saveKey(key)
@@ -760,11 +761,15 @@ Submit.MouseButton1Click:Connect(function()
 end)
 
 Get.MouseButton1Click:Connect(function()
-    if setclipboard then setclipboard(GET_LINK) end
+    if setclipboard then 
+        pcall(function() setclipboard(GET_LINK) end) 
+    end
 end)
 
 Support.MouseButton1Click:Connect(function()
-    if setclipboard then setclipboard(DISCORD_LINK) end
+    if setclipboard then 
+        pcall(function() setclipboard(DISCORD_LINK) end) 
+    end
 end)
 
 Close.MouseButton1Click:Connect(function()
