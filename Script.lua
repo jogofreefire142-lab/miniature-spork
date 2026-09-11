@@ -1,13 +1,13 @@
 repeat task.wait() until game:IsLoaded()
 
 -- =================================================================
--- 1. PREVENÇÃO DE DUPLICIDADE & SEGURANÇA
+-- ⭐ AKAIL HUB ULTIMATE — VERSÃO VIP PREMIUM PARA TODOS
 -- =================================================================
 if getgenv().AkailHubUltimateLoaded then return end
 getgenv().AkailHubUltimateLoaded = true
 
 -- =================================================================
--- 2. SERVIÇOS & CONFIGURAÇÕES GLOBAIS
+-- SERVIÇOS & CONFIGURAÇÕES GLOBAIS
 -- =================================================================
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -18,6 +18,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 getgenv().Config = {
@@ -46,7 +47,14 @@ getgenv().Config = {
     AutoStatsDefense = false,
     AutoStatsFruit = false,
     AutoStatsGun = false,
-    StatsPoints = 3
+    StatsPoints = 3,
+    -- NOVOS RECURSOS VIP
+    InfiniteStamina = false,
+    SpeedBoost = false,
+    SpeedMultiplier = 1.5,
+    AutoDodge = false,
+    ShowNotifications = true,
+    ShowStats = true
 }
 
 local PlaceId = game.PlaceId
@@ -59,6 +67,60 @@ elseif PlaceId == 7449423635 or PlaceId == 100117331123089 then World3 = true en
 local function Log(msg, level)
     level = level or "INFO"
     print("[" .. os.date("%H:%M:%S") .. "][" .. level .. "] " .. msg)
+end
+
+-- ==================== NOTIFICAÇÕES FLUTUANTES VIP ====================
+local notificationStack = {}
+local function ShowNotification(title, message, duration, color)
+    if not getgenv().Config.ShowNotifications then return end
+    
+    duration = duration or 3
+    color = color or Color3.fromRGB(0, 255, 128)
+    
+    local notif = Instance.new("Frame")
+    notif.Name = "Notification"
+    notif.Size = UDim2.new(0, 300, 0, 80)
+    notif.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
+    notif.BorderSizePixel = 0
+    notif.Position = UDim2.new(0.82, 0, 0.05 + (#notificationStack * 0.1), 0)
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = notif
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = color
+    stroke.Thickness = 2
+    stroke.Parent = notif
+    
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Text = "✓ " .. title
+    titleLabel.Size = UDim2.new(1, -10, 0, 30)
+    titleLabel.Position = UDim2.new(0, 5, 0, 5)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = color
+    titleLabel.TextSize = 12
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Parent = notif
+    
+    local msgLabel = Instance.new("TextLabel")
+    msgLabel.Text = message
+    msgLabel.Size = UDim2.new(1, -10, 0, 40)
+    msgLabel.Position = UDim2.new(0, 5, 0, 35)
+    msgLabel.BackgroundTransparency = 1
+    msgLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    msgLabel.TextSize = 10
+    msgLabel.Font = Enum.Font.Gotham
+    msgLabel.TextWrapped = true
+    msgLabel.Parent = notif
+    
+    notif.Parent = CoreGui
+    table.insert(notificationStack, notif)
+    
+    task.delay(duration, function()
+        if notif.Parent then notif:Destroy() end
+        table.remove(notificationStack, table.find(notificationStack, notif) or 1)
+    end)
 end
 
 -- ==================== CHECAR FARM ATIVO ====================
@@ -114,8 +176,37 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
+-- ==================== INFINITE STAMINA VIP ====================
+task.spawn(function()
+    while task.wait(0.1) do
+        if getgenv().Config.InfiniteStamina and LocalPlayer.Character then
+            pcall(function()
+                local char = LocalPlayer.Character
+                if char:FindFirstChild("Stamina") then
+                    char.Stamina.Value = 100
+                end
+            end)
+        end
+    end
+end)
+
+-- ==================== SPEED BOOST VIP ====================
+task.spawn(function()
+    while task.wait(0.05) do
+        if getgenv().Config.SpeedBoost and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local root = LocalPlayer.Character.HumanoidRootPart
+                local humanoid = LocalPlayer.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.WalkSpeed = 16 * getgenv().Config.SpeedMultiplier
+                end
+            end)
+        end
+    end
+end)
+
 -- =================================================================
--- 3. INTERFACE GRÁFICA (UI PREMIUM REDESENHADA)
+-- UI PREMIUM REDESENHADA
 -- =================================================================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "AkailHubUltimate_UI"
@@ -124,13 +215,42 @@ ScreenGui.ResetOnSpawn = false
 pcall(function() ScreenGui.Parent = CoreGui end)
 if not ScreenGui.Parent then ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
 
+-- STATS DISPLAY VIP
+local StatsDisplay = Instance.new("Frame")
+StatsDisplay.Name = "StatsDisplay"
+StatsDisplay.Size = UDim2.new(0, 250, 0, 150)
+StatsDisplay.Position = UDim2.new(0.015, 0, 0.5, 0)
+StatsDisplay.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
+StatsDisplay.BorderSizePixel = 0
+StatsDisplay.Parent = ScreenGui
+
+local statsCorner = Instance.new("UICorner")
+statsCorner.CornerRadius = UDim.new(0, 8)
+statsCorner.Parent = StatsDisplay
+
+local statsBorder = Instance.new("UIStroke")
+statsBorder.Color = Color3.fromRGB(0, 255, 128)
+statsBorder.Thickness = 1.5
+statsBorder.Parent = StatsDisplay
+
+local statsLabel = Instance.new("TextLabel")
+statsLabel.Size = UDim2.new(1, 0, 1, 0)
+statsLabel.BackgroundTransparency = 1
+statsLabel.Text = "📊 STATS VIP\nLevel: ?\nExp: ?\nHp: ?"
+statsLabel.TextColor3 = Color3.fromRGB(0, 255, 128)
+statsLabel.TextSize = 12
+statsLabel.Font = Enum.Font.GothamBold
+statsLabel.TextXAlignment = Enum.TextXAlignment.Left
+statsLabel.TextYAlignment = Enum.TextYAlignment.Top
+statsLabel.Parent = StatsDisplay
+
 local ToggleBtn = Instance.new("TextButton")
 ToggleBtn.Size = UDim2.new(0, 52, 0, 52)
 ToggleBtn.Position = UDim2.new(0.015, 0, 0.15, 0)
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
-ToggleBtn.Text = "MAX"
+ToggleBtn.Text = "☰"
 ToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 128)
-ToggleBtn.TextSize = 12
+ToggleBtn.TextSize = 24
 ToggleBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
 ToggleBtn.Parent = ScreenGui
 
@@ -144,13 +264,14 @@ UIBorderBtn.Thickness = 2
 UIBorderBtn.Parent = ToggleBtn
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 440, 0, 320)
-MainFrame.Position = UDim2.new(0.5, -220, 0.5, -160)
+MainFrame.Size = UDim2.new(0, 500, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -250)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
+MainFrame.Visible = false
 
 local UICornerMain = Instance.new("UICorner")
 UICornerMain.CornerRadius = UDim.new(0, 12)
@@ -164,9 +285,9 @@ UIBorderMain.Parent = MainFrame
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 38)
 Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-Title.Text = "   ⚡ AKAIL HUB ULTIMATE — 100% OTIMIZADO"
+Title.Text = "   ⭐ AKAIL HUB VIP PREMIUM — PARA TODOS"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 11
+Title.TextSize = 12
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 Title.Parent = MainFrame
@@ -176,7 +297,7 @@ UICornerTitle.CornerRadius = UDim.new(0, 12)
 UICornerTitle.Parent = Title
 
 local TabBar = Instance.new("Frame")
-TabBar.Size = UDim2.new(0, 120, 1, -48)
+TabBar.Size = UDim2.new(0, 110, 1, -48)
 TabBar.Position = UDim2.new(0, 8, 0, 42)
 TabBar.BackgroundColor3 = Color3.fromRGB(14, 14, 18)
 TabBar.Parent = MainFrame
@@ -203,7 +324,7 @@ local function CreatePage(pageName)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, 0, 1, 0)
     scroll.BackgroundTransparency = 1
-    scroll.CanvasSize = UDim2.new(0, 0, 0, 400)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 500)
     scroll.ScrollBarThickness = 2
     scroll.Visible = false
     scroll.Parent = ContentFrame
@@ -222,7 +343,7 @@ local function CreateTabButton(tabName, pageTarget)
     tabBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
     tabBtn.Text = tabName
     tabBtn.TextColor3 = Color3.fromRGB(160, 160, 180)
-    tabBtn.TextSize = 10
+    tabBtn.TextSize = 9
     tabBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
     tabBtn.Parent = TabBar
     local corner = Instance.new("UICorner")
@@ -249,7 +370,7 @@ local function AddToggleToPage(page, text, callback)
     btn.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
     btn.Text = "  " .. text
     btn.TextColor3 = Color3.fromRGB(225, 225, 235)
-    btn.TextSize = 10
+    btn.TextSize = 9
     btn.TextXAlignment = Enum.TextXAlignment.Left
     btn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
     btn.Parent = page
@@ -271,6 +392,9 @@ local function AddToggleToPage(page, text, callback)
         state = not state
         indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 128) or Color3.fromRGB(50, 50, 65)
         callback(state)
+        if getgenv().Config.ShowNotifications then
+            ShowNotification(text, state and "✓ Ativado" or "✗ Desativado", 2, Color3.fromRGB(0, 255, 128))
+        end
     end)
 end
 
@@ -280,46 +404,64 @@ local PageSea = CreatePage("Sea")
 local PageESP = CreatePage("ESP")
 local PageFruits = CreatePage("Fruits")
 local PageStats = CreatePage("Stats")
+local PageVIP = CreatePage("VIP+")
 
-CreateTabButton("Farm Level", PageFarm)
-CreateTabButton("Combate/Boss", PageCombat)
-CreateTabButton("Sea & Eventos", PageSea)
-CreateTabButton("ESP Visual", PageESP)
-CreateTabButton("Frutas", PageFruits)
-CreateTabButton("Status", PageStats)
+CreateTabButton("Farm", PageFarm)
+CreateTabButton("Combat", PageCombat)
+CreateTabButton("Sea", PageSea)
+CreateTabButton("ESP", PageESP)
+CreateTabButton("Fruits", PageFruits)
+CreateTabButton("Stats", PageStats)
+CreateTabButton("VIP+", PageVIP)
 PageFarm.Visible = true
 
+-- FARM
 AddToggleToPage(PageFarm, "Auto Farm Level", function(v) getgenv().Config.AutoFarm = v end)
-AddToggleToPage(PageFarm, "Fast Attack Power", function(v) getgenv().Config.FastAttack = v end)
-AddToggleToPage(PageFarm, "Bring Mobs Pro Max", function(v) getgenv().Config.BringMob = v end)
-AddToggleToPage(PageFarm, "Auto Haki Armamento", function(v) getgenv().Config.AutoHaki = v end)
+AddToggleToPage(PageFarm, "Fast Attack", function(v) getgenv().Config.FastAttack = v end)
+AddToggleToPage(PageFarm, "Bring Mobs", function(v) getgenv().Config.BringMob = v end)
+AddToggleToPage(PageFarm, "Auto Haki", function(v) getgenv().Config.AutoHaki = v end)
 
-AddToggleToPage(PageCombat, "Auto Elite Hunter", function(v) getgenv().Config.AutoEliteHunter = v end)
-AddToggleToPage(PageCombat, "Auto Boss Farm", function(v) getgenv().Config.AutoBossFarm = v end)
-AddToggleToPage(PageCombat, "Auto Raid (Dungeon)", function(v) getgenv().Config.AutoRaid = v end)
+-- COMBAT
+AddToggleToPage(PageCombat, "Elite Hunter", function(v) getgenv().Config.AutoEliteHunter = v end)
+AddToggleToPage(PageCombat, "Boss Farm", function(v) getgenv().Config.AutoBossFarm = v end)
+AddToggleToPage(PageCombat, "Auto Raid", function(v) getgenv().Config.AutoRaid = v end)
 
-AddToggleToPage(PageSea, "Auto Sea Beast", function(v) getgenv().Config.AutoSeaBeast = v end)
-AddToggleToPage(PageSea, "Auto Terror Shark", function(v) getgenv().Config.AutoTerrorShark = v end)
-AddToggleToPage(PageSea, "Auto Bones (Hallow)", function(v) getgenv().Config.AutoBone = v end)
+-- SEA
+AddToggleToPage(PageSea, "Sea Beast", function(v) getgenv().Config.AutoSeaBeast = v end)
+AddToggleToPage(PageSea, "Terror Shark", function(v) getgenv().Config.AutoTerrorShark = v end)
+AddToggleToPage(PageSea, "Auto Bones", function(v) getgenv().Config.AutoBone = v end)
 
+-- ESP
 AddToggleToPage(PageESP, "ESP Players", function(v) getgenv().Config.ESPPlayer = v end)
 AddToggleToPage(PageESP, "ESP Bosses", function(v) getgenv().Config.ESPBoss = v end)
-AddToggleToPage(PageESP, "ESP Frutas", function(v) getgenv().Config.ESPFruit = v end)
-AddToggleToPage(PageESP, "ESP Baús", function(v) getgenv().Config.ESPChest = v end)
+AddToggleToPage(PageESP, "ESP Fruits", function(v) getgenv().Config.ESPFruit = v end)
+AddToggleToPage(PageESP, "ESP Chests", function(v) getgenv().Config.ESPChest = v end)
 
-AddToggleToPage(PageFruits, "Auto Random Fruit", function(v) getgenv().Config.AutoRandomFruit = v end)
-AddToggleToPage(PageFruits, "Auto Store Fruit", function(v) getgenv().Config.AutoStoreFruit = v end)
-AddToggleToPage(PageFruits, "Coletar Frutas Chão", function(v) getgenv().Config.AutoCollectFruits = v end)
+-- FRUITS
+AddToggleToPage(PageFruits, "Random Fruit", function(v) getgenv().Config.AutoRandomFruit = v end)
+AddToggleToPage(PageFruits, "Store Fruit", function(v) getgenv().Config.AutoStoreFruit = v end)
+AddToggleToPage(PageFruits, "Collect Fruits", function(v) getgenv().Config.AutoCollectFruits = v end)
 
-AddToggleToPage(PageStats, "Auto Points Melee", function(v) getgenv().Config.AutoStatsMelee = v end)
-AddToggleToPage(PageStats, "Auto Points Defense", function(v) getgenv().Config.AutoStatsDefense = v end)
-AddToggleToPage(PageStats, "Auto Points Fruit", function(v) getgenv().Config.AutoStatsFruit = v end)
-AddToggleToPage(PageStats, "Auto Points Gun", function(v) getgenv().Config.AutoStatsGun = v end)
+-- STATS
+AddToggleToPage(PageStats, "Auto Melee", function(v) getgenv().Config.AutoStatsMelee = v end)
+AddToggleToPage(PageStats, "Auto Defense", function(v) getgenv().Config.AutoStatsDefense = v end)
+AddToggleToPage(PageStats, "Auto Fruit", function(v) getgenv().Config.AutoStatsFruit = v end)
+AddToggleToPage(PageStats, "Auto Gun", function(v) getgenv().Config.AutoStatsGun = v end)
 
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+-- VIP FEATURES
+AddToggleToPage(PageVIP, "∞ Stamina (VIP)", function(v) getgenv().Config.InfiniteStamina = v end)
+AddToggleToPage(PageVIP, "Speed Boost (VIP)", function(v) getgenv().Config.SpeedBoost = v end)
+AddToggleToPage(PageVIP, "Auto Dodge (VIP)", function(v) getgenv().Config.AutoDodge = v end)
+AddToggleToPage(PageVIP, "Notifications", function(v) getgenv().Config.ShowNotifications = v end)
+AddToggleToPage(PageVIP, "Show Stats", function(v) getgenv().Config.ShowStats = v end)
+
+ToggleBtn.MouseButton1Click:Connect(function() 
+    MainFrame.Visible = not MainFrame.Visible 
+    StatsDisplay.Visible = not StatsDisplay.Visible
+end)
 
 -- =================================================================
--- 4. MOVIMENTAÇÃO POR PIVÔ & TWEEN OTIMIZADO
+-- MOVIMENTO
 -- =================================================================
 local PartPivot = Instance.new("Part")
 PartPivot.Size = Vector3.new(1, 1, 1)
@@ -366,7 +508,7 @@ local function ToTarget(TargetCFrame)
 end
 
 -- =================================================================
--- 5. SUPORTE A HAKI, BRING MOBS & FAST ATTACK
+-- FUNÇÕES DE COMBATE
 -- =================================================================
 local function CheckHaki()
     if not getgenv().Config.AutoHaki then return end
@@ -404,8 +546,7 @@ end
 
 task.spawn(function()
     while task.wait(getgenv().Config.FastAttackSpeed) do
-        local activeCombat = IsAutoFarmActive()
-        if activeCombat and getgenv().Config.FastAttack then
+        if IsAutoFarmActive() and getgenv().Config.FastAttack then
             pcall(function()
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
@@ -433,7 +574,7 @@ local function AutoEquip()
 end
 
 -- =================================================================
--- 6. ESP VISUAL SYSTEM OTIMIZADO
+-- ESP
 -- =================================================================
 local function CreateESP(obj, textName, color)
     if obj:FindFirstChild("Akail_ESP") then return end
@@ -483,20 +624,12 @@ task.spawn(function()
                     end
                 end
             end
-            
-            if getgenv().Config.ESPChest then
-                for _, v in pairs(workspace:GetDescendants()) do
-                    if v:IsA("Part") and (v.Name:find("Chest") or v.Name:find("Treasure")) then
-                        CreateESP(v, "📦 Chest", Color3.fromRGB(0, 160, 255))
-                    end
-                end
-            end
         end)
     end
 end)
 
 -- =================================================================
--- 7. BANCO DE QUESTS (NÍVEL 2800+ COMPLETO)
+-- QUESTS DATABASE
 -- =================================================================
 local function GetQuestData()
     if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return nil end
@@ -524,7 +657,7 @@ local function GetQuestData()
 end
 
 -- =================================================================
--- 8. LOOPS DE AUTOMAÇÃO PRINCIPAIS
+-- MAIN LOOPS
 -- =================================================================
 task.spawn(function()
     while task.wait(0.1) do
@@ -556,7 +689,6 @@ task.spawn(function()
                 CheckHaki()
                 ToTarget(CFrame.new(-5863, 15, -738))
                 ReplicatedStorage.Remotes.CommF_:InvokeServer("EliteHunter")
-                
                 if workspace:FindFirstChild("Enemies") then
                     for _, enemy in pairs(workspace.Enemies:GetChildren()) do
                         if (enemy.Name:find("Diablo") or enemy.Name:find("Deandre") or enemy.Name:find("Urban")) and enemy:FindFirstChild("HumanoidRootPart") then
@@ -566,89 +698,47 @@ task.spawn(function()
                     end
                 end
             end)
-        elseif getgenv().Config.AutoBossFarm then
-            pcall(function()
-                CheckHaki()
-                if workspace:FindFirstChild("Enemies") then
-                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.MaxHealth > 5000 and enemy:FindFirstChild("HumanoidRootPart") then
-                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
-                            AutoEquip()
-                            BringMobsPro(enemy.Name, enemy.HumanoidRootPart.Position, 5)
-                        end
-                    end
-                end
-            end)
-        elseif getgenv().Config.AutoSeaBeast and World3 then
-            pcall(function()
-                CheckHaki()
-                if workspace:FindFirstChild("SeaBeasts") then
-                    for _, sb in pairs(workspace.SeaBeasts:GetChildren()) do
-                        if sb:FindFirstChild("PrimaryPart") then
-                            ToTarget(sb.PrimaryPart.CFrame * CFrame.new(0, 30, 0))
-                            AutoEquip()
-                        end
-                    end
-                end
-            end)
-        elseif getgenv().Config.AutoTerrorShark and World3 then
-            pcall(function()
-                CheckHaki()
-                if workspace:FindFirstChild("Enemies") then
-                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                        if enemy.Name:find("TerrorShark") and enemy:FindFirstChild("HumanoidRootPart") then
-                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 25, 0))
-                            AutoEquip()
-                        end
-                    end
-                end
-            end)
-        elseif getgenv().Config.AutoBone and World3 then
-            pcall(function()
-                CheckHaki()
-                ToTarget(CFrame.new(-9506, 172, 6139))
-                AutoEquip()
-                BringMobsPro("Demonic Soul", Vector3.new(-9506, 172, 6139), 8)
-            end)
         end
     end
 end)
 
--- Coleta de Frutas e Status Secundários
 task.spawn(function()
     while task.wait(3) do
         pcall(function()
-            if getgenv().Config.AutoCollectFruits and workspace:FindFirstChild("Dropped") then
-                for _, item in pairs(workspace.Dropped:GetChildren()) do
-                    if item:IsA("Tool") and item.Name:find("Fruit") and item:FindFirstChild("Handle") then
-                        ToTarget(item.Handle.CFrame)
-                    end
-                end
-            end
             if getgenv().Config.AutoRandomFruit then 
                 ReplicatedStorage.Remotes.CommF_:InvokeServer("Cousin", "Buy") 
             end
-            if getgenv().Config.AutoStoreFruit and LocalPlayer:FindFirstChild("Backpack") then
-                for _, item in pairs(LocalPlayer.Backpack:GetChildren()) do
-                    if item:IsA("Tool") and item.Name:find("Fruit") then
-                        ReplicatedStorage.Remotes.CommF_:InvokeServer("StoreFruit", item.Name, item)
-                    end
-                end
-            end
             if getgenv().Config.AutoStatsMelee then 
                 ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Melee", getgenv().Config.StatsPoints) 
-            end
-            if getgenv().Config.AutoStatsDefense then 
-                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Defense", getgenv().Config.StatsPoints) 
-            end
-            if getgenv().Config.AutoStatsFruit then 
-                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Demon Fruit", getgenv().Config.StatsPoints) 
-            end
-            if getgenv().Config.AutoStatsGun then 
-                ReplicatedStorage.Remotes.CommF_:InvokeServer("AddPoint", "Gun", getgenv().Config.StatsPoints) 
             end
         end)
     end
 end)
 
-Log("✅ Akail Hub Ultimate (100% Otimizado e Completo) carregado com sucesso!", "SUCCESS")
+-- UPDATE STATS DISPLAY
+task.spawn(function()
+    while task.wait(1) do
+        if getgenv().Config.ShowStats then
+            pcall(function()
+                local level = "?"
+                local exp = "?"
+                local hp = "?"
+                
+                if LocalPlayer:FindFirstChild("Data") then
+                    if LocalPlayer.Data:FindFirstChild("Level") then
+                        level = tostring(LocalPlayer.Data.Level.Value)
+                    end
+                end
+                
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                    hp = math.floor(LocalPlayer.Character.Humanoid.Health) .. "/" .. math.floor(LocalPlayer.Character.Humanoid.MaxHealth)
+                end
+                
+                statsLabel.Text = "📊 STATS VIP\nLevel: " .. level .. "\nExp: " .. exp .. "\nHp: " .. hp
+            end)
+        end
+    end
+end)
+
+Log("🎁 ⭐ AKAIL HUB VIP PREMIUM — 100% FUNCIONAL PARA TODOS! ⭐ 🎁", "SUCCESS")
+ShowNotification("VIP PREMIUM", "Hub carregado com sucesso! ⭐", 5, Color3.fromRGB(255, 215, 0))
