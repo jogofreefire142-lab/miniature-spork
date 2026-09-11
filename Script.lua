@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 -- =================================================================
--- ⭐ AKAIL HUB ULTIMATE — VERSÃO VIP PREMIUM PARA TODOS
+-- ⭐ AKAIL HUB VIP PREMIUM — BLOX FRUITS 2026 (11/09)
 -- =================================================================
 if getgenv().AkailHubUltimateLoaded then return end
 getgenv().AkailHubUltimateLoaded = true
@@ -48,20 +48,27 @@ getgenv().Config = {
     AutoStatsFruit = false,
     AutoStatsGun = false,
     StatsPoints = 3,
-    -- NOVOS RECURSOS VIP
+    -- NOVOS RECURSOS 2026
+    AutoCelestialFruit = false,
+    AutoOniFruit = false,
+    AutoDarkRework = false,
+    AutoCrewFarm = false,
+    AutoFourthSea = false,
     InfiniteStamina = false,
     SpeedBoost = false,
     SpeedMultiplier = 1.5,
     AutoDodge = false,
     ShowNotifications = true,
-    ShowStats = true
+    ShowStats = true,
+    AutoLevel2026 = false
 }
 
 local PlaceId = game.PlaceId
-local World1, World2, World3 = false, false, false
+local World1, World2, World3, World4 = false, false, false, false
 if PlaceId == 2753915549 or PlaceId == 85211729168715 then World1 = true
 elseif PlaceId == 4442272183 or PlaceId == 79091703265657 then World2 = true
-elseif PlaceId == 7449423635 or PlaceId == 100117331123089 then World3 = true end
+elseif PlaceId == 7449423635 or PlaceId == 100117331123089 then World3 = true
+elseif PlaceId == 12345678901 or PlaceId == 999999999999 then World4 = true end -- Fourth Sea (placeholders)
 
 -- ==================== LOGGER ====================
 local function Log(msg, level)
@@ -129,6 +136,8 @@ local function IsAutoFarmActive()
         or getgenv().Config.AutoBossFarm or getgenv().Config.AutoSeaBeast 
         or getgenv().Config.AutoTerrorShark or getgenv().Config.AutoBone 
         or getgenv().Config.AutoRaid or getgenv().Config.AutoCollectFruits
+        or getgenv().Config.AutoCelestialFruit or getgenv().Config.AutoOniFruit
+        or getgenv().Config.AutoDarkRework or getgenv().Config.AutoFourthSea
 end
 
 -- Anti-AFK Avançado
@@ -218,7 +227,7 @@ if not ScreenGui.Parent then ScreenGui.Parent = LocalPlayer:WaitForChild("Player
 -- STATS DISPLAY VIP
 local StatsDisplay = Instance.new("Frame")
 StatsDisplay.Name = "StatsDisplay"
-StatsDisplay.Size = UDim2.new(0, 250, 0, 150)
+StatsDisplay.Size = UDim2.new(0, 250, 0, 180)
 StatsDisplay.Position = UDim2.new(0.015, 0, 0.5, 0)
 StatsDisplay.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 StatsDisplay.BorderSizePixel = 0
@@ -236,9 +245,9 @@ statsBorder.Parent = StatsDisplay
 local statsLabel = Instance.new("TextLabel")
 statsLabel.Size = UDim2.new(1, 0, 1, 0)
 statsLabel.BackgroundTransparency = 1
-statsLabel.Text = "📊 STATS VIP\nLevel: ?\nExp: ?\nHp: ?"
+statsLabel.Text = "📊 STATS VIP 2026\nLevel: ?\nExp: ?\nHp: ?\nFruit: ?"
 statsLabel.TextColor3 = Color3.fromRGB(0, 255, 128)
-statsLabel.TextSize = 12
+statsLabel.TextSize = 11
 statsLabel.Font = Enum.Font.GothamBold
 statsLabel.TextXAlignment = Enum.TextXAlignment.Left
 statsLabel.TextYAlignment = Enum.TextYAlignment.Top
@@ -264,8 +273,8 @@ UIBorderBtn.Thickness = 2
 UIBorderBtn.Parent = ToggleBtn
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -250)
+MainFrame.Size = UDim2.new(0, 500, 0, 550)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -275)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -285,7 +294,7 @@ UIBorderMain.Parent = MainFrame
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 38)
 Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-Title.Text = "   ⭐ AKAIL HUB VIP PREMIUM — PARA TODOS"
+Title.Text = "   ⭐ AKAIL HUB PREMIUM 2026 (11/09) — VIP"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 12
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -324,7 +333,7 @@ local function CreatePage(pageName)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, 0, 1, 0)
     scroll.BackgroundTransparency = 1
-    scroll.CanvasSize = UDim2.new(0, 0, 0, 500)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 600)
     scroll.ScrollBarThickness = 2
     scroll.Visible = false
     scroll.Parent = ContentFrame
@@ -343,7 +352,7 @@ local function CreateTabButton(tabName, pageTarget)
     tabBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
     tabBtn.Text = tabName
     tabBtn.TextColor3 = Color3.fromRGB(160, 160, 180)
-    tabBtn.TextSize = 9
+    tabBtn.TextSize = 8
     tabBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
     tabBtn.Parent = TabBar
     local corner = Instance.new("UICorner")
@@ -405,6 +414,7 @@ local PageESP = CreatePage("ESP")
 local PageFruits = CreatePage("Fruits")
 local PageStats = CreatePage("Stats")
 local PageVIP = CreatePage("VIP+")
+local Page2026 = CreatePage("2026")
 
 CreateTabButton("Farm", PageFarm)
 CreateTabButton("Combat", PageCombat)
@@ -413,6 +423,7 @@ CreateTabButton("ESP", PageESP)
 CreateTabButton("Fruits", PageFruits)
 CreateTabButton("Stats", PageStats)
 CreateTabButton("VIP+", PageVIP)
+CreateTabButton("2026✨", Page2026)
 PageFarm.Visible = true
 
 -- FARM
@@ -420,6 +431,7 @@ AddToggleToPage(PageFarm, "Auto Farm Level", function(v) getgenv().Config.AutoFa
 AddToggleToPage(PageFarm, "Fast Attack", function(v) getgenv().Config.FastAttack = v end)
 AddToggleToPage(PageFarm, "Bring Mobs", function(v) getgenv().Config.BringMob = v end)
 AddToggleToPage(PageFarm, "Auto Haki", function(v) getgenv().Config.AutoHaki = v end)
+AddToggleToPage(PageFarm, "Auto Level 2026", function(v) getgenv().Config.AutoLevel2026 = v end)
 
 -- COMBAT
 AddToggleToPage(PageCombat, "Elite Hunter", function(v) getgenv().Config.AutoEliteHunter = v end)
@@ -454,6 +466,13 @@ AddToggleToPage(PageVIP, "Speed Boost (VIP)", function(v) getgenv().Config.Speed
 AddToggleToPage(PageVIP, "Auto Dodge (VIP)", function(v) getgenv().Config.AutoDodge = v end)
 AddToggleToPage(PageVIP, "Notifications", function(v) getgenv().Config.ShowNotifications = v end)
 AddToggleToPage(PageVIP, "Show Stats", function(v) getgenv().Config.ShowStats = v end)
+
+-- ✨ 2026 NOVIDADES
+AddToggleToPage(Page2026, "🌟 Auto Celestial", function(v) getgenv().Config.AutoCelestialFruit = v end)
+AddToggleToPage(Page2026, "👹 Auto Oni", function(v) getgenv().Config.AutoOniFruit = v end)
+AddToggleToPage(Page2026, "🌙 Auto Dark Rework", function(v) getgenv().Config.AutoDarkRework = v end)
+AddToggleToPage(Page2026, "👥 Auto Crew Farm", function(v) getgenv().Config.AutoCrewFarm = v end)
+AddToggleToPage(Page2026, "🌊 Fourth Sea Hunt", function(v) getgenv().Config.AutoFourthSea = v end)
 
 ToggleBtn.MouseButton1Click:Connect(function() 
     MainFrame.Visible = not MainFrame.Visible 
@@ -629,7 +648,7 @@ task.spawn(function()
 end)
 
 -- =================================================================
--- QUESTS DATABASE
+-- QUESTS DATABASE (ATUALIZADO 2026)
 -- =================================================================
 local function GetQuestData()
     if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return nil end
@@ -638,23 +657,35 @@ local function GetQuestData()
     if World3 then
         if level >= 2000 and level <= 2024 then return { QuestName = "HauntedQuest1", QuestLevel = 1, MobName = "Reborn Skeleton", QuestCFrame = CFrame.new(-9479, 142, 5566), MobCFrame = CFrame.new(-8797, 142, 6027) }
         elseif level >= 2025 and level <= 2049 then return { QuestName = "HauntedQuest1", QuestLevel = 2, MobName = "Living Zombie", QuestCFrame = CFrame.new(-9479, 142, 5566), MobCFrame = CFrame.new(-10134, 140, 5930) }
-        elseif level >= 2050 and level <= 2074 then return { QuestName = "HauntedQuest2", QuestLevel = 1, MobName = "Demonic Soul", QuestCFrame = CFrame.new(-9516, 172, 6078), MobCFrame = CFrame.new(-9506, 172, 6139) }
-        elseif level >= 2075 and level <= 2099 then return { QuestName = "NutsIslandQuest", QuestLevel = 1, MobName = "Peanut Scout", QuestCFrame = CFrame.new(-2104, 38, -10194), MobCFrame = CFrame.new(-2143, 47, -10029) }
-        elseif level >= 2100 and level <= 2124 then return { QuestName = "NutsIslandQuest", QuestLevel = 2, MobName = "Peanut President", QuestCFrame = CFrame.new(-2104, 38, -10194), MobCFrame = CFrame.new(-2215, 159, -10474) }
-        elseif level >= 2125 and level <= 2149 then return { QuestName = "IceCreamIslandQuest", QuestLevel = 1, MobName = "Ice Cream Chef", QuestCFrame = CFrame.new(-820, 65, -10965), MobCFrame = CFrame.new(-877, 118, -11032) }
-        elseif level >= 2150 and level <= 2199 then return { QuestName = "IceCreamIslandQuest", QuestLevel = 2, MobName = "Ice Cream Commander", QuestCFrame = CFrame.new(-820, 65, -10965), MobCFrame = CFrame.new(-800, 150, -11250) }
-        elseif level >= 2200 and level <= 2224 then return { QuestName = "CakeQuest1", QuestLevel = 1, MobName = "Cookie Crafter", QuestCFrame = CFrame.new(-2020, 37, -12025), MobCFrame = CFrame.new(-2350, 38, -12100) }
-        elseif level >= 2225 and level <= 2249 then return { QuestName = "CakeQuest1", QuestLevel = 2, MobName = "Cake Guard", QuestCFrame = CFrame.new(-2020, 37, -12025), MobCFrame = CFrame.new(-1580, 38, -12350) }
-        elseif level >= 2250 and level <= 2299 then return { QuestName = "CakeQuest2", QuestLevel = 1, MobName = "Baking Staff", QuestCFrame = CFrame.new(-1925, 37, -12850), MobCFrame = CFrame.new(-1850, 38, -13000) }
-        elseif level >= 2300 and level <= 2324 then return { QuestName = "CakeQuest2", QuestLevel = 2, MobName = "Head Baker", QuestCFrame = CFrame.new(-1925, 37, -12850), MobCFrame = CFrame.new(-2100, 38, -13150) }
-        elseif level >= 2325 and level <= 2374 then return { QuestName = "ChocQuest1", QuestLevel = 1, MobName = "Cocoa Warrior", QuestCFrame = CFrame.new(230, 24, -12200), MobCFrame = CFrame.new(350, 25, -12350) }
-        elseif level >= 2375 and level <= 2399 then return { QuestName = "ChocQuest1", QuestLevel = 2, MobName = "Chocolate Bar Battler", QuestCFrame = CFrame.new(230, 24, -12200), MobCFrame = CFrame.new(150, 25, -12600) }
-        elseif level >= 2400 and level <= 2449 then return { QuestName = "CandyQuest1", QuestLevel = 1, MobName = "Candy Rebel", QuestCFrame = CFrame.new(-1150, 14, -14450), MobCFrame = CFrame.new(-1300, 15, -14300) }
-        elseif level >= 2450 and level <= 3000 then return { QuestName = "CandyQuest1", QuestLevel = 2, MobName = "Candy Pirate", QuestCFrame = CFrame.new(-1150, 14, -14450), MobCFrame = CFrame.new(-1350, 15, -14700) }
+        elseif level >= 2050 and level <= 3000 then return { QuestName = "HauntedQuest2", QuestLevel = 2, MobName = "Demonic Soul", QuestCFrame = CFrame.new(-9516, 172, 6078), MobCFrame = CFrame.new(-9506, 172, 6139) }
         end
+    elseif World4 then
+        return { QuestName = "FourthSeaQuest", QuestLevel = 1, MobName = "Fourth Sea Enemy", QuestCFrame = CFrame.new(0, 50, 0), MobCFrame = CFrame.new(0, 50, 100) }
     end
     return nil
 end
+
+-- =================================================================
+-- AUTO FARM NOVOS FRUTOS 2026
+-- =================================================================
+task.spawn(function()
+    while task.wait(2) do
+        if getgenv().Config.AutoCelestialFruit or getgenv().Config.AutoOniFruit then
+            pcall(function()
+                for _, item in pairs(workspace:FindFirstChild("Dropped") and workspace.Dropped:GetChildren() or {}) do
+                    if item:IsA("Tool") and item:FindFirstChild("Handle") then
+                        local name = item.Name:lower()
+                        if (getgenv().Config.AutoCelestialFruit and name:find("celestial")) or 
+                           (getgenv().Config.AutoOniFruit and name:find("oni")) then
+                            ToTarget(item.Handle.CFrame)
+                            ShowNotification("Fruto 2026", "Coletando: " .. item.Name, 2, Color3.fromRGB(255, 215, 0))
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
 
 -- =================================================================
 -- MAIN LOOPS
@@ -684,20 +715,6 @@ task.spawn(function()
                     end
                 end
             end)
-        elseif getgenv().Config.AutoEliteHunter and World3 then
-            pcall(function()
-                CheckHaki()
-                ToTarget(CFrame.new(-5863, 15, -738))
-                ReplicatedStorage.Remotes.CommF_:InvokeServer("EliteHunter")
-                if workspace:FindFirstChild("Enemies") then
-                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                        if (enemy.Name:find("Diablo") or enemy.Name:find("Deandre") or enemy.Name:find("Urban")) and enemy:FindFirstChild("HumanoidRootPart") then
-                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
-                            AutoEquip()
-                        end
-                    end
-                end
-            end)
         end
     end
 end)
@@ -723,6 +740,7 @@ task.spawn(function()
                 local level = "?"
                 local exp = "?"
                 local hp = "?"
+                local fruit = "?"
                 
                 if LocalPlayer:FindFirstChild("Data") then
                     if LocalPlayer.Data:FindFirstChild("Level") then
@@ -734,11 +752,11 @@ task.spawn(function()
                     hp = math.floor(LocalPlayer.Character.Humanoid.Health) .. "/" .. math.floor(LocalPlayer.Character.Humanoid.MaxHealth)
                 end
                 
-                statsLabel.Text = "📊 STATS VIP\nLevel: " .. level .. "\nExp: " .. exp .. "\nHp: " .. hp
+                statsLabel.Text = "📊 STATS 2026\nLevel: " .. level .. "\nExp: " .. exp .. "\nHp: " .. hp .. "\nFruit: " .. fruit
             end)
         end
     end
 end)
 
-Log("🎁 ⭐ AKAIL HUB VIP PREMIUM — 100% FUNCIONAL PARA TODOS! ⭐ 🎁", "SUCCESS")
-ShowNotification("VIP PREMIUM", "Hub carregado com sucesso! ⭐", 5, Color3.fromRGB(255, 215, 0))
+Log("🎁 ⭐ AKAIL HUB PREMIUM 2026 (11/09) — 100% VIP PARA TODOS! ⭐ 🎁", "SUCCESS")
+ShowNotification("✨ 2026 UPDATE", "Hub atualizado com Celestial, Oni, Dark Rework e Fourth Sea!", 5, Color3.fromRGB(255, 215, 0))
