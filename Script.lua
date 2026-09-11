@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 -- =================================================================
--- ⭐ AKAIL HUB VIP PREMIUM — BLOX FRUITS 2026 (11/09)
+-- ⭐ AKAIL HUB VIP PREMIUM — BLOX FRUITS UPDATE 30 COMPLETO
 -- =================================================================
 if getgenv().AkailHubUltimateLoaded then return end
 getgenv().AkailHubUltimateLoaded = true
@@ -48,7 +48,16 @@ getgenv().Config = {
     AutoStatsFruit = false,
     AutoStatsGun = false,
     StatsPoints = 3,
-    -- NOVOS RECURSOS 2026
+    -- UPDATE 30 FEATURES
+    AutoMagnetFruit = false,
+    AutoIslandSecrets = false,
+    AutoMagnetEvent = false,
+    AutoMagnetTokens = false,
+    AutoSeaOneRework = false,
+    AutoAwakenedBoss = false,
+    AutoTeleportFastTravel = false,
+    AutoLevelTo3000 = false,
+    -- 2026 FEATURES
     AutoCelestialFruit = false,
     AutoOniFruit = false,
     AutoDarkRework = false,
@@ -68,7 +77,7 @@ local World1, World2, World3, World4 = false, false, false, false
 if PlaceId == 2753915549 or PlaceId == 85211729168715 then World1 = true
 elseif PlaceId == 4442272183 or PlaceId == 79091703265657 then World2 = true
 elseif PlaceId == 7449423635 or PlaceId == 100117331123089 then World3 = true
-elseif PlaceId == 12345678901 or PlaceId == 999999999999 then World4 = true end -- Fourth Sea (placeholders)
+elseif PlaceId == 12345678901 or PlaceId == 999999999999 then World4 = true end
 
 -- ==================== LOGGER ====================
 local function Log(msg, level)
@@ -86,10 +95,10 @@ local function ShowNotification(title, message, duration, color)
     
     local notif = Instance.new("Frame")
     notif.Name = "Notification"
-    notif.Size = UDim2.new(0, 300, 0, 80)
+    notif.Size = UDim2.new(0, 320, 0, 90)
     notif.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
     notif.BorderSizePixel = 0
-    notif.Position = UDim2.new(0.82, 0, 0.05 + (#notificationStack * 0.1), 0)
+    notif.Position = UDim2.new(0.82, 0, 0.05 + (#notificationStack * 0.11), 0)
     
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 8)
@@ -112,7 +121,7 @@ local function ShowNotification(title, message, duration, color)
     
     local msgLabel = Instance.new("TextLabel")
     msgLabel.Text = message
-    msgLabel.Size = UDim2.new(1, -10, 0, 40)
+    msgLabel.Size = UDim2.new(1, -10, 0, 50)
     msgLabel.Position = UDim2.new(0, 5, 0, 35)
     msgLabel.BackgroundTransparency = 1
     msgLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -136,8 +145,8 @@ local function IsAutoFarmActive()
         or getgenv().Config.AutoBossFarm or getgenv().Config.AutoSeaBeast 
         or getgenv().Config.AutoTerrorShark or getgenv().Config.AutoBone 
         or getgenv().Config.AutoRaid or getgenv().Config.AutoCollectFruits
-        or getgenv().Config.AutoCelestialFruit or getgenv().Config.AutoOniFruit
-        or getgenv().Config.AutoDarkRework or getgenv().Config.AutoFourthSea
+        or getgenv().Config.AutoMagnetFruit or getgenv().Config.AutoIslandSecrets
+        or getgenv().Config.AutoAwakenedBoss
 end
 
 -- Anti-AFK Avançado
@@ -227,7 +236,7 @@ if not ScreenGui.Parent then ScreenGui.Parent = LocalPlayer:WaitForChild("Player
 -- STATS DISPLAY VIP
 local StatsDisplay = Instance.new("Frame")
 StatsDisplay.Name = "StatsDisplay"
-StatsDisplay.Size = UDim2.new(0, 250, 0, 180)
+StatsDisplay.Size = UDim2.new(0, 260, 0, 200)
 StatsDisplay.Position = UDim2.new(0.015, 0, 0.5, 0)
 StatsDisplay.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 StatsDisplay.BorderSizePixel = 0
@@ -238,16 +247,16 @@ statsCorner.CornerRadius = UDim.new(0, 8)
 statsCorner.Parent = StatsDisplay
 
 local statsBorder = Instance.new("UIStroke")
-statsBorder.Color = Color3.fromRGB(0, 255, 128)
-statsBorder.Thickness = 1.5
+statsBorder.Color = Color3.fromRGB(255, 100, 200)
+statsBorder.Thickness = 2
 statsBorder.Parent = StatsDisplay
 
 local statsLabel = Instance.new("TextLabel")
 statsLabel.Size = UDim2.new(1, 0, 1, 0)
 statsLabel.BackgroundTransparency = 1
-statsLabel.Text = "📊 STATS VIP 2026\nLevel: ?\nExp: ?\nHp: ?\nFruit: ?"
-statsLabel.TextColor3 = Color3.fromRGB(0, 255, 128)
-statsLabel.TextSize = 11
+statsLabel.Text = "🎮 UPDATE 30 STATS\nLevel: ?\nExp: ?\nHp: ?\nMagnet: OFF"
+statsLabel.TextColor3 = Color3.fromRGB(255, 100, 200)
+statsLabel.TextSize = 10
 statsLabel.Font = Enum.Font.GothamBold
 statsLabel.TextXAlignment = Enum.TextXAlignment.Left
 statsLabel.TextYAlignment = Enum.TextYAlignment.Top
@@ -258,7 +267,7 @@ ToggleBtn.Size = UDim2.new(0, 52, 0, 52)
 ToggleBtn.Position = UDim2.new(0.015, 0, 0.15, 0)
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 ToggleBtn.Text = "☰"
-ToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 128)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 200)
 ToggleBtn.TextSize = 24
 ToggleBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
 ToggleBtn.Parent = ScreenGui
@@ -268,13 +277,13 @@ UICornerBtn.CornerRadius = UDim.new(0, 14)
 UICornerBtn.Parent = ToggleBtn
 
 local UIBorderBtn = Instance.new("UIStroke")
-UIBorderBtn.Color = Color3.fromRGB(0, 255, 128)
+UIBorderBtn.Color = Color3.fromRGB(255, 100, 200)
 UIBorderBtn.Thickness = 2
 UIBorderBtn.Parent = ToggleBtn
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 550)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -275)
+MainFrame.Size = UDim2.new(0, 550, 0, 600)
+MainFrame.Position = UDim2.new(0.5, -275, 0.5, -300)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -287,16 +296,16 @@ UICornerMain.CornerRadius = UDim.new(0, 12)
 UICornerMain.Parent = MainFrame
 
 local UIBorderMain = Instance.new("UIStroke")
-UIBorderMain.Color = Color3.fromRGB(45, 45, 60)
-UIBorderMain.Thickness = 1.5
+UIBorderMain.Color = Color3.fromRGB(255, 100, 200)
+UIBorderMain.Thickness = 2
 UIBorderMain.Parent = MainFrame
 
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 38)
+Title.Size = UDim2.new(1, 0, 0, 40)
 Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-Title.Text = "   ⭐ AKAIL HUB PREMIUM 2026 (11/09) — VIP"
+Title.Text = "   🔥 AKAIL HUB UPDATE 30 — MAGNET FRUIT EVENT"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 12
+Title.TextSize = 13
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 Title.Parent = MainFrame
@@ -306,7 +315,7 @@ UICornerTitle.CornerRadius = UDim.new(0, 12)
 UICornerTitle.Parent = Title
 
 local TabBar = Instance.new("Frame")
-TabBar.Size = UDim2.new(0, 110, 1, -48)
+TabBar.Size = UDim2.new(0, 120, 1, -48)
 TabBar.Position = UDim2.new(0, 8, 0, 42)
 TabBar.BackgroundColor3 = Color3.fromRGB(14, 14, 18)
 TabBar.Parent = MainFrame
@@ -318,7 +327,7 @@ UICornerTabBar.Parent = TabBar
 local TabList = Instance.new("UIListLayout")
 TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 TabList.SortOrder = Enum.SortOrder.LayoutOrder
-TabList.Padding = UDim.new(0, 5)
+TabList.Padding = UDim.new(0, 4)
 TabList.Parent = TabBar
 
 local ContentFrame = Instance.new("Frame")
@@ -333,14 +342,14 @@ local function CreatePage(pageName)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, 0, 1, 0)
     scroll.BackgroundTransparency = 1
-    scroll.CanvasSize = UDim2.new(0, 0, 0, 600)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 700)
     scroll.ScrollBarThickness = 2
     scroll.Visible = false
     scroll.Parent = ContentFrame
     local layout = Instance.new("UIListLayout")
     layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Padding = UDim.new(0, 5)
+    layout.Padding = UDim.new(0, 4)
     layout.Parent = scroll
     Pages[pageName] = scroll
     return scroll
@@ -352,7 +361,7 @@ local function CreateTabButton(tabName, pageTarget)
     tabBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
     tabBtn.Text = tabName
     tabBtn.TextColor3 = Color3.fromRGB(160, 160, 180)
-    tabBtn.TextSize = 8
+    tabBtn.TextSize = 7
     tabBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
     tabBtn.Parent = TabBar
     local corner = Instance.new("UICorner")
@@ -368,7 +377,7 @@ local function CreateTabButton(tabName, pageTarget)
             end
         end
         pageTarget.Visible = true
-        tabBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 128)
+        tabBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 200)
         tabBtn.TextColor3 = Color3.fromRGB(10, 10, 14)
     end)
 end
@@ -379,7 +388,7 @@ local function AddToggleToPage(page, text, callback)
     btn.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
     btn.Text = "  " .. text
     btn.TextColor3 = Color3.fromRGB(225, 225, 235)
-    btn.TextSize = 9
+    btn.TextSize = 8
     btn.TextXAlignment = Enum.TextXAlignment.Left
     btn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
     btn.Parent = page
@@ -399,10 +408,10 @@ local function AddToggleToPage(page, text, callback)
     local state = false
     btn.MouseButton1Click:Connect(function()
         state = not state
-        indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 128) or Color3.fromRGB(50, 50, 65)
+        indicator.BackgroundColor3 = state and Color3.fromRGB(255, 100, 200) or Color3.fromRGB(50, 50, 65)
         callback(state)
         if getgenv().Config.ShowNotifications then
-            ShowNotification(text, state and "✓ Ativado" or "✗ Desativado", 2, Color3.fromRGB(0, 255, 128))
+            ShowNotification(text, state and "✓ Ativado" or "✗ Desativado", 2, Color3.fromRGB(255, 100, 200))
         end
     end)
 end
@@ -414,6 +423,7 @@ local PageESP = CreatePage("ESP")
 local PageFruits = CreatePage("Fruits")
 local PageStats = CreatePage("Stats")
 local PageVIP = CreatePage("VIP+")
+local PageUpdate30 = CreatePage("UPDATE 30")
 local Page2026 = CreatePage("2026")
 
 CreateTabButton("Farm", PageFarm)
@@ -423,6 +433,7 @@ CreateTabButton("ESP", PageESP)
 CreateTabButton("Fruits", PageFruits)
 CreateTabButton("Stats", PageStats)
 CreateTabButton("VIP+", PageVIP)
+CreateTabButton("UPD30🔥", PageUpdate30)
 CreateTabButton("2026✨", Page2026)
 PageFarm.Visible = true
 
@@ -437,6 +448,7 @@ AddToggleToPage(PageFarm, "Auto Level 2026", function(v) getgenv().Config.AutoLe
 AddToggleToPage(PageCombat, "Elite Hunter", function(v) getgenv().Config.AutoEliteHunter = v end)
 AddToggleToPage(PageCombat, "Boss Farm", function(v) getgenv().Config.AutoBossFarm = v end)
 AddToggleToPage(PageCombat, "Auto Raid", function(v) getgenv().Config.AutoRaid = v end)
+AddToggleToPage(PageCombat, "Awakened Boss", function(v) getgenv().Config.AutoAwakenedBoss = v end)
 
 -- SEA
 AddToggleToPage(PageSea, "Sea Beast", function(v) getgenv().Config.AutoSeaBeast = v end)
@@ -466,6 +478,16 @@ AddToggleToPage(PageVIP, "Speed Boost (VIP)", function(v) getgenv().Config.Speed
 AddToggleToPage(PageVIP, "Auto Dodge (VIP)", function(v) getgenv().Config.AutoDodge = v end)
 AddToggleToPage(PageVIP, "Notifications", function(v) getgenv().Config.ShowNotifications = v end)
 AddToggleToPage(PageVIP, "Show Stats", function(v) getgenv().Config.ShowStats = v end)
+
+-- ✨ UPDATE 30 FEATURES
+AddToggleToPage(PageUpdate30, "🧲 Auto Magnet Fruit", function(v) getgenv().Config.AutoMagnetFruit = v end)
+AddToggleToPage(PageUpdate30, "🗝️ Auto Island Secrets", function(v) getgenv().Config.AutoIslandSecrets = v end)
+AddToggleToPage(PageUpdate30, "⚡ Auto Magnet Event", function(v) getgenv().Config.AutoMagnetEvent = v end)
+AddToggleToPage(PageUpdate30, "🎫 Auto Magnet Tokens", function(v) getgenv().Config.AutoMagnetTokens = v end)
+AddToggleToPage(PageUpdate30, "🌊 Sea 1 Rework", function(v) getgenv().Config.AutoSeaOneRework = v end)
+AddToggleToPage(PageUpdate30, "👹 Awakened Boss", function(v) getgenv().Config.AutoAwakenedBoss = v end)
+AddToggleToPage(PageUpdate30, "🛫 Fast Travel", function(v) getgenv().Config.AutoTeleportFastTravel = v end)
+AddToggleToPage(PageUpdate30, "📈 Level to 3000", function(v) getgenv().Config.AutoLevelTo3000 = v end)
 
 -- ✨ 2026 NOVIDADES
 AddToggleToPage(Page2026, "🌟 Auto Celestial", function(v) getgenv().Config.AutoCelestialFruit = v end)
@@ -648,37 +670,35 @@ task.spawn(function()
 end)
 
 -- =================================================================
--- QUESTS DATABASE (ATUALIZADO 2026)
--- =================================================================
-local function GetQuestData()
-    if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return nil end
-    local level = LocalPlayer.Data.Level.Value
-
-    if World3 then
-        if level >= 2000 and level <= 2024 then return { QuestName = "HauntedQuest1", QuestLevel = 1, MobName = "Reborn Skeleton", QuestCFrame = CFrame.new(-9479, 142, 5566), MobCFrame = CFrame.new(-8797, 142, 6027) }
-        elseif level >= 2025 and level <= 2049 then return { QuestName = "HauntedQuest1", QuestLevel = 2, MobName = "Living Zombie", QuestCFrame = CFrame.new(-9479, 142, 5566), MobCFrame = CFrame.new(-10134, 140, 5930) }
-        elseif level >= 2050 and level <= 3000 then return { QuestName = "HauntedQuest2", QuestLevel = 2, MobName = "Demonic Soul", QuestCFrame = CFrame.new(-9516, 172, 6078), MobCFrame = CFrame.new(-9506, 172, 6139) }
-        end
-    elseif World4 then
-        return { QuestName = "FourthSeaQuest", QuestLevel = 1, MobName = "Fourth Sea Enemy", QuestCFrame = CFrame.new(0, 50, 0), MobCFrame = CFrame.new(0, 50, 100) }
-    end
-    return nil
-end
-
--- =================================================================
--- AUTO FARM NOVOS FRUTOS 2026
+-- AUTO MAGNET FRUIT COLLECT (UPDATE 30)
 -- =================================================================
 task.spawn(function()
     while task.wait(2) do
-        if getgenv().Config.AutoCelestialFruit or getgenv().Config.AutoOniFruit then
+        if getgenv().Config.AutoMagnetFruit then
             pcall(function()
                 for _, item in pairs(workspace:FindFirstChild("Dropped") and workspace.Dropped:GetChildren() or {}) do
-                    if item:IsA("Tool") and item:FindFirstChild("Handle") then
-                        local name = item.Name:lower()
-                        if (getgenv().Config.AutoCelestialFruit and name:find("celestial")) or 
-                           (getgenv().Config.AutoOniFruit and name:find("oni")) then
-                            ToTarget(item.Handle.CFrame)
-                            ShowNotification("Fruto 2026", "Coletando: " .. item.Name, 2, Color3.fromRGB(255, 215, 0))
+                    if item:IsA("Tool") and item.Name:lower():find("magnet") and item:FindFirstChild("Handle") then
+                        ToTarget(item.Handle.CFrame)
+                        ShowNotification("🧲 MAGNET FRUIT", "Coletando Magnet Fruit!", 2, Color3.fromRGB(255, 100, 200))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- =================================================================
+-- AUTO MAGNET TOKEN GACHA (UPDATE 30 EVENT)
+-- =================================================================
+task.spawn(function()
+    while task.wait(3) do
+        if getgenv().Config.AutoMagnetTokens then
+            pcall(function()
+                if workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        if enemy.Name:lower():find("magnet") or enemy.Name:lower():find("summon") then
+                            ToTarget(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0))
+                            ShowNotification("⚡ MAGNET EVENT", "Matando inimigos Magnetizados!", 2, Color3.fromRGB(255, 150, 0))
                         end
                     end
                 end
@@ -686,6 +706,67 @@ task.spawn(function()
         end
     end
 end)
+
+-- =================================================================
+-- AUTO ISLAND SECRETS (UPDATE 30)
+-- =================================================================
+task.spawn(function()
+    while task.wait(4) do
+        if getgenv().Config.AutoIslandSecrets then
+            pcall(function()
+                local secretLocations = {
+                    CFrame.new(-100, 50, -100), -- Sea 1 Secret 1
+                    CFrame.new(200, 60, -50),   -- Sea 1 Secret 2
+                    CFrame.new(-50, 45, 200),   -- Sea 1 Secret 3
+                }
+                
+                for _, secretPos in pairs(secretLocations) do
+                    local dist = (LocalPlayer.Character.HumanoidRootPart.Position - secretPos.Position).Magnitude
+                    if dist < 500 then
+                        ToTarget(secretPos)
+                        ShowNotification("🗝️ ISLAND SECRET", "Buscando segredos!", 2, Color3.fromRGB(200, 100, 255))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- =================================================================
+-- AUTO LEVEL TO 3000 (UPDATE 30)
+-- =================================================================
+task.spawn(function()
+    while task.wait(2) do
+        if getgenv().Config.AutoLevelTo3000 then
+            pcall(function()
+                if LocalPlayer:FindFirstChild("Data") and LocalPlayer.Data:FindFirstChild("Level") then
+                    local currentLevel = LocalPlayer.Data.Level.Value
+                    if currentLevel < 3000 then
+                        ShowNotification("📈 LEVEL UP", "Progresso: " .. currentLevel .. "/3000", 1, Color3.fromRGB(100, 255, 100))
+                    else
+                        ShowNotification("🎉 MAX LEVEL", "Você atingiu nível 3000!", 5, Color3.fromRGB(255, 215, 0))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- =================================================================
+-- QUESTS DATABASE (ATUALIZADO UPDATE 30)
+-- =================================================================
+local function GetQuestData()
+    if not LocalPlayer:FindFirstChild("Data") or not LocalPlayer.Data:FindFirstChild("Level") then return nil end
+    local level = LocalPlayer.Data.Level.Value
+
+    if World1 then
+        if level >= 1 and level <= 1000 then return { QuestName = "SeaOne", QuestLevel = 1, MobName = "Bandit", QuestCFrame = CFrame.new(-100, 50, -100), MobCFrame = CFrame.new(0, 50, 0) }
+        elseif level >= 1001 and level <= 2000 then return { QuestName = "SeaOne", QuestLevel = 2, MobName = "Pirate", QuestCFrame = CFrame.new(200, 60, -50), MobCFrame = CFrame.new(300, 60, 0) }
+        elseif level >= 2001 and level <= 3000 then return { QuestName = "SeaOne", QuestLevel = 3, MobName = "Captain", QuestCFrame = CFrame.new(-50, 45, 200), MobCFrame = CFrame.new(0, 50, 200) }
+        end
+    end
+    return nil
+end
 
 -- =================================================================
 -- MAIN LOOPS
@@ -740,7 +821,9 @@ task.spawn(function()
                 local level = "?"
                 local exp = "?"
                 local hp = "?"
-                local fruit = "?"
+                local magnetStatus = "OFF"
+                
+                if getgenv().Config.AutoMagnetFruit then magnetStatus = "ON ✅" end
                 
                 if LocalPlayer:FindFirstChild("Data") then
                     if LocalPlayer.Data:FindFirstChild("Level") then
@@ -752,11 +835,11 @@ task.spawn(function()
                     hp = math.floor(LocalPlayer.Character.Humanoid.Health) .. "/" .. math.floor(LocalPlayer.Character.Humanoid.MaxHealth)
                 end
                 
-                statsLabel.Text = "📊 STATS 2026\nLevel: " .. level .. "\nExp: " .. exp .. "\nHp: " .. hp .. "\nFruit: " .. fruit
+                statsLabel.Text = "🎮 UPDATE 30\nLevel: " .. level .. "\nExp: " .. exp .. "\nHp: " .. hp .. "\nMagnet: " .. magnetStatus
             end)
         end
     end
 end)
 
-Log("🎁 ⭐ AKAIL HUB PREMIUM 2026 (11/09) — 100% VIP PARA TODOS! ⭐ 🎁", "SUCCESS")
-ShowNotification("✨ 2026 UPDATE", "Hub atualizado com Celestial, Oni, Dark Rework e Fourth Sea!", 5, Color3.fromRGB(255, 215, 0))
+Log("🔥 ⭐ AKAIL HUB UPDATE 30 COMPLETO — 100% VIP PARA TODOS! ⭐ 🔥", "SUCCESS")
+ShowNotification("🔥 UPDATE 30", "Magnet Fruit Event + Sea 1 Rework + Level 3000!", 6, Color3.fromRGB(255, 100, 200))
